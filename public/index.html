@@ -350,20 +350,6 @@
       </div>
     </section>
 
-    <!-- ============ HABITS ============ -->
-    <section class="view" id="view-habits" data-view="habits">
-      <div class="sec-head">
-        <div>
-          <div class="eyebrow">Daily Rituals</div>
-          <div class="h-title">Keep them alive</div>
-        </div>
-        <button class="add-btn" id="add-habit-btn">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add
-        </button>
-      </div>
-      <div class="habit-list" id="habit-list" data-bind="habits"></div>
-    </section>
 
     <!-- ============ WALL ============ -->
     <section class="view" id="view-wall" data-view="wall">
@@ -407,10 +393,6 @@
     <button class="active" data-go="home">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19" stroke-linecap="round"/></svg>
       Home
-    </button>
-    <button data-go="habits">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="3.5" cy="6" r="1.5"/><circle cx="3.5" cy="12" r="1.5"/><circle cx="3.5" cy="18" r="1.5"/></svg>
-      Habits
     </button>
     <button data-go="wall">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="6" rx="1.2"/><rect x="13" y="4" width="8" height="6" rx="1.2"/><rect x="3" y="14" width="8" height="6" rx="1.2"/><rect x="13" y="14" width="8" height="6" rx="1.2"/></svg>
@@ -613,7 +595,7 @@
   }
 
   var addBtn=$('#add-habit-btn');
-  addBtn.addEventListener('click', function(){
+  if(addBtn) addBtn.addEventListener('click', function(){
     if($('#add-row-live')) return;
     var row=document.createElement('div'); row.className='add-row'; row.id='add-row-live';
     row.innerHTML='<input id="add-input" placeholder="Name a new ritual…" maxlength="40" />'+
@@ -810,6 +792,24 @@
   var audioOn = (localStorage.getItem('byls-sound')||'on')==='on';
   var AC=null;
   function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return AC; }
+
+  // Unlock WebAudio on the first user gesture. Mobile browsers create the
+  // AudioContext suspended; it must be resumed inside a gesture, and the very
+  // first sound otherwise fires before resume() completes. Run in the CAPTURE
+  // phase on pointerdown/touchstart so the context is live before the BREAK
+  // click triggers playGlassBreak().
+  var audioUnlocked=false;
+  function unlockAudio(){
+    if(audioUnlocked) return;
+    var c=ac(); if(!c) return;
+    if(c.state==='suspended'){ try{ c.resume(); }catch(e){} }
+    try{ var b=c.createBuffer(1,1,22050), s=c.createBufferSource(); s.buffer=b; s.connect(c.destination); s.start(0); }catch(e){}
+    if(c.state==='running') audioUnlocked=true;
+  }
+  ['pointerdown','touchstart','mousedown','keydown'].forEach(function(ev){
+    document.addEventListener(ev, unlockAudio, { capture:true, passive:true });
+  });
+
   function setSoundUI(){
     $('#sound-on').style.display=audioOn?'block':'none';
     $('#sound-off').style.display=audioOn?'none':'block';
@@ -894,12 +894,9 @@
   function loadLocal(){ try{ return JSON.parse(localStorage.getItem(LS)||'null'); }catch(e){ return null; } }
   function saveLocal(s){ try{ localStorage.setItem(LS, JSON.stringify(s)); }catch(e){} }
 
-  /* ----- starter habits (only used on a brand-new, empty install) ----- */
-  var SEED_HABITS = [
-    { id:'h_story',   name:'Break a limiting story', streak:0, goal:30, done:false },
-    { id:'h_energy',  name:'Energy visualization',   streak:0, goal:30, done:false },
-    { id:'h_posture', name:'Stand tall',             streak:0, goal:30, done:false }
-  ];
+  /* ----- habits disabled for the MVP (Habits tab removed) — kept empty.
+     To re-enable later, restore the Habits tab markup + nav button and seed here. ----- */
+  var SEED_HABITS = [];
 
   function normalize(base){
     var s = base || {};
