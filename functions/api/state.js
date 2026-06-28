@@ -50,10 +50,11 @@ export async function onRequestGet({ env }) {
         st = { ...st, ...parsed, _notionPageId: p.id };
       } else if (type === "Break") {
         const text = rtPlain(props.Story?.rich_text);
+        const newText = rtPlain(props["New Story"]?.rich_text);
         const when = props.When?.created_time;
         const date = props.Date?.date?.start;
         const ts = when ? Date.parse(when) : (date ? Date.parse(date) : Date.now());
-        if (text) stories.push({ id: p.id, text, ts });
+        if (text) stories.push({ id: p.id, text, newText, ts });
       }
     }
 

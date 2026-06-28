@@ -31,10 +31,12 @@ export async function onRequestPost({ request, env }) {
     if (type === "break") {
       const txt = ((data && data.text) || "").trim();
       const date = data && data.date;
+      const newTxt = ((data && data.newText) || "").trim();
       const props = {
         "Name": title(txt ? ("💥 " + txt.slice(0, 60)) : ("💥 Break · " + (date || ""))),
         "Type": selectProp("Break"),
-        "Story": richText(txt)
+        "Story": richText(txt),
+        "New Story": richText(newTxt)
       };
       if (date) props["Date"] = { date: { start: date } };
       const res = await fetch(`${NOTION_API}/pages`, {

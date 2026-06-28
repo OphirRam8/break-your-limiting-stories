@@ -298,6 +298,33 @@
   .break-actions button{border:none;cursor:pointer;font-family:var(--display);font-weight:700;font-size:15px;
     padding:14px 22px;border-radius:14px;transition:transform .12s}
   .break-actions button:active{transform:scale(.95)}
+  /* reframe step */
+  .reframe{margin-top:22px;width:100%;max-width:340px;margin:22px auto 0;display:none;text-align:left}
+  .reframe.in{display:block;animation:brokenPop .4s ease}
+  .reframe-label{font-family:var(--display);font-weight:700;font-size:15px;color:var(--cream);margin-bottom:8px;text-align:center}
+  #newstory-input{width:100%;border:1px solid rgba(255,255,255,.20);background:rgba(255,255,255,.07);color:var(--cream);
+    border-radius:14px;padding:13px 14px;font-family:inherit;font-size:15px;resize:none;outline:none;box-sizing:border-box}
+  #newstory-input::placeholder{color:rgba(255,255,255,.42)}
+  .aff-save{display:flex;align-items:center;gap:8px;justify-content:center;margin:12px 0 0;font-size:13px;color:rgba(255,255,255,.72);cursor:pointer}
+  .aff-save input{width:16px;height:16px;accent-color:#FFC766}
+  #lockin-btn{margin-top:14px;width:100%;border:none;border-radius:14px;padding:15px;font-family:var(--display);font-weight:800;font-size:16px;
+    color:#1a0f14;background:linear-gradient(100deg,#FFC766,#FF6A2B);cursor:pointer}
+  #lockin-btn:disabled{opacity:.4;cursor:not-allowed}
+  .newstory-show{display:none;margin:14px auto 0;max-width:320px;font-size:16px;color:var(--cream)}
+  .newstory-show.in{display:block;opacity:.95}
+  .newstory-show .nl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);display:block;margin-bottom:4px}
+  /* wall: old -> new */
+  .story .old-txt{opacity:.55}
+  .story .new-wrap{margin-top:9px;display:flex;align-items:flex-start;gap:8px}
+  .story .new-wrap .arrow{color:#FFC766;font-weight:800;flex:none;line-height:1.4}
+  .story .new-txt{font-size:15.5px;line-height:1.4;color:var(--cream);font-weight:700}
+  /* affirmations tab */
+  .aff-add{display:flex;gap:8px;margin-bottom:16px;align-items:stretch}
+  .aff-add textarea{flex:1;border:1px solid var(--card-line);background:var(--card);color:var(--cream);border-radius:14px;padding:12px 13px;font-family:inherit;font-size:15px;resize:none;outline:none}
+  .aff-add button{border:none;border-radius:14px;padding:0 18px;font-family:var(--display);font-weight:700;font-size:15px;color:#1a0f14;background:linear-gradient(100deg,#FFC766,#FF6A2B);cursor:pointer}
+  .aff-item{position:relative;padding:16px 44px 16px 18px;border-radius:18px;background:var(--card);border:1px solid var(--card-line);margin-bottom:10px;font-size:15.5px;line-height:1.4;color:var(--cream)}
+  .aff-item .del{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--muted);cursor:pointer;font-size:22px;line-height:1;padding:6px}
+  .aff-empty{color:var(--muted);text-align:center;padding:30px 10px;line-height:1.6}
   .ba-primary{background:linear-gradient(110deg,var(--gold),var(--magenta));color:#3a1000}
   .ba-ghost{background:rgba(255,255,255,.85);color:var(--cream);border:1px solid var(--card-line)!important}
 
@@ -399,6 +426,22 @@
         <p id="encourage-text">Twelve days ago this was just an idea. Look at you now — still here, still breaking. The game's not over.</p>
       </div>
     </section>
+
+    <!-- ============ AFFIRMATIONS ============ -->
+    <section class="view" id="view-aff" data-view="aff">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Say them out loud</div>
+          <div class="h-title">Daily Affirmations</div>
+        </div>
+      </div>
+      <p class="sub" style="margin-bottom:14px">Your new stories, on repeat. Hand on chest — say each one like you mean it.</p>
+      <div class="aff-add">
+        <textarea id="aff-input" rows="2" placeholder="Add an affirmation…"></textarea>
+        <button id="aff-add-btn">Add</button>
+      </div>
+      <div class="aff-list" id="aff-list" data-bind="affirmations"></div>
+    </section>
   </main>
 
   <!-- ===== Bottom nav ===== -->
@@ -415,6 +458,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 5 5.4.7-4 3.7 1 5.4L12 21l-4.8 2.8 1-5.4-4-3.7 5.4-.7z"/></svg>
       Wins
     </button>
+    <button data-go="aff">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C1 9 2.5 5.5 6 5.5c2 0 3 1.2 3.8 2.3C10.6 6.7 11.6 5.5 13.6 5.5 17.1 5.5 18.6 9 17.1 12 14.6 16.5 12 21 12 21z"/></svg>
+      Affirm
+    </button>
   </nav>
 </div>
 
@@ -427,6 +474,13 @@
   <div class="break-panel">
     <div class="broken" id="broken-text">BROKEN!</div>
     <div class="broke-story" id="broke-story"></div>
+    <div class="reframe" id="reframe">
+      <div class="reframe-label">Now write your new story</div>
+      <textarea id="newstory-input" rows="2" placeholder="The new, empowering belief you choose instead…"></textarea>
+      <label class="aff-save"><input type="checkbox" id="newstory-aff" checked> Save as a daily affirmation</label>
+      <button id="lockin-btn" disabled>Lock it in</button>
+    </div>
+    <div class="newstory-show" id="newstory-show"></div>
     <div class="break-actions" id="break-actions">
       <button class="ba-primary" id="ba-wall">See the Wall</button>
       <button class="ba-ghost" id="ba-keep">Keep going</button>
@@ -494,7 +548,7 @@
   /* =================== RENDER =================== */
   function render(){
     state.storiesBroken = state.stories.length;
-    renderHome(); renderHabits(); renderWall(); renderWins();
+    renderHome(); renderHabits(); renderWall(); renderWins(); renderAffirmations();
   }
 
   function renderHome(){
@@ -548,9 +602,25 @@
       var node=document.createElement('div');
       node.className='story'; node.style.animationDelay=(i*0.04)+'s'; node.dataset.id=s.id;
       node.innerHTML=
-        '<span class="txt">'+escapeHtml(s.text)+'</span>'+
-        '<div class="foot"><span class="badge">Broken</span><span class="ts">'+relTime(s.ts)+'</span></div>';
+        '<span class="txt old-txt">'+escapeHtml(s.text)+'</span>'+
+        (s.newText ? '<div class="new-wrap"><span class="arrow">&rarr;</span><span class="new-txt">'+escapeHtml(s.newText)+'</span></div>' : '')+
+        '<div class="foot"><span class="badge">'+(s.newText?'Rewritten':'Broken')+'</span><span class="ts">'+relTime(s.ts)+'</span></div>';
       feed.appendChild(node);
+    });
+  }
+
+  function renderAffirmations(){
+    var list=$('#aff-list'); if(!list) return;
+    var affs=state.affirmations||[];
+    list.innerHTML='';
+    if(!affs.length){
+      list.innerHTML='<div class="aff-empty">No affirmations yet.<br>Break a story and save the new one — or add your own above. 🌅</div>';
+      return;
+    }
+    affs.forEach(function(a){
+      var node=document.createElement('div'); node.className='aff-item'; node.dataset.id=a.id;
+      node.innerHTML=escapeHtml(a.text)+'<button class="del" title="Remove" aria-label="Remove">×</button>';
+      list.appendChild(node);
     });
   }
 
@@ -586,6 +656,29 @@
   $('#nav').addEventListener('click', function(e){
     var b=e.target.closest('button[data-go]'); if(b) go(b.dataset.go);
   });
+
+  /* =================== AFFIRMATIONS interaction =================== */
+  (function(){
+    var inp=$('#aff-input'), btn=$('#aff-add-btn'), list=$('#aff-list');
+    function addAff(){
+      var t=(inp.value||'').trim(); if(!t) return;
+      state.affirmations = state.affirmations || [];
+      state.affirmations.unshift({ id:uid(), text:t, ts:Date.now() });
+      inp.value=''; inp.style.height='';
+      document.dispatchEvent(new CustomEvent('aff:change'));
+      renderAffirmations();
+    }
+    if(btn) btn.addEventListener('click', addAff);
+    if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); addAff(); } });
+    if(list) list.addEventListener('click', function(e){
+      var d=e.target.closest('.del'); if(!d) return;
+      var item=d.closest('.aff-item'); if(!item) return;
+      var id=item.dataset.id;
+      state.affirmations=(state.affirmations||[]).filter(function(a){return a.id!==id;});
+      document.dispatchEvent(new CustomEvent('aff:change'));
+      renderAffirmations();
+    });
+  })();
 
   /* =================== HABITS interaction =================== */
   function checkinHabit(id, node){
@@ -637,25 +730,42 @@
 
   var breakBtn=$('#break-btn');
   breakBtn.addEventListener('click', function(){
-    // Text is OPTIONAL: one tap counts the day; typing a story also posts it to the Wall.
-    doBreak(input.value.trim());
+    var text=input.value.trim();
+    if(!text){ // must name the story before breaking it
+      input.focus();
+      input.style.transition='box-shadow .2s'; input.style.boxShadow='0 0 0 2px var(--magenta)';
+      setTimeout(function(){ input.style.boxShadow=''; }, 700);
+      return;
+    }
+    doBreak(text);
   });
 
+  var pendingOld='';
   function doBreak(text){
-    if(text){
-      var story={ id:uid(), text:text, ts:Date.now() };
-      // optimistic local add (backend confirms via setState)
-      state.stories.unshift(story);
-      state.storiesBroken = state.stories.length;
-      document.dispatchEvent(new CustomEvent('story:break',{detail:story}));
-    } else {
-      // broke a story without writing it down — still counts the day
-      document.dispatchEvent(new CustomEvent('day:break',{detail:{ts:Date.now()}}));
-    }
+    pendingOld=text;
     input.value=''; input.style.height='';
     playGlassBreak();
-    runBreakSequence(text || 'One more limit — broken.');
-    renderWall(); renderWins();
+    runBreakSequence(text);   // BROKEN + struck story, then reveals the required "new story" step
+  }
+
+  function lockInNewStory(){
+    var ni=$('#newstory-input'); var newText=(ni.value||'').trim();
+    if(!newText) return;                       // new story is REQUIRED
+    var asAff = $('#newstory-aff') && $('#newstory-aff').checked;
+    var story={ id:uid(), text:pendingOld, newText:newText, ts:Date.now() };
+    state.stories.unshift(story);
+    state.storiesBroken = state.stories.length;
+    if(asAff){
+      state.affirmations = state.affirmations || [];
+      state.affirmations.unshift({ id:uid(), text:newText, ts:Date.now() });
+    }
+    document.dispatchEvent(new CustomEvent('story:complete',{detail:{ text:pendingOld, newText:newText }}));
+    $('#newstory-show').innerHTML='<span class="nl">Your new story</span>'+escapeHtml(newText);
+    $('#newstory-show').classList.add('in');
+    $('#reframe').classList.remove('in');
+    breakActions.classList.add('in');
+    ni.value='';
+    renderWall(); renderWins(); renderAffirmations();
   }
 
   /* =================== BREAK animation sequence =================== */
@@ -689,7 +799,11 @@
     // 6. story + actions
     var sn = text.length>90 ? text.slice(0,90)+'…' : text;
     brokeStory.innerHTML='<s>'+escapeHtml(sn)+'</s>';
-    setTimeout(function(){ brokeStory.classList.add('in'); breakActions.classList.add('in'); }, 360);
+    var ni=$('#newstory-input'), lb=$('#lockin-btn');
+    if(ni) ni.value=''; if(lb) lb.disabled=true;
+    var ns=$('#newstory-show'); if(ns){ ns.classList.remove('in'); ns.innerHTML=''; }
+    breakActions.classList.remove('in');
+    setTimeout(function(){ brokeStory.classList.add('in'); $('#reframe').classList.add('in'); if(ni) ni.focus(); }, 360);
   }
 
   function spawnShards(){
@@ -722,6 +836,14 @@
     setTimeout(function(){ shatter.innerHTML=''; }, 1600);
   }
 
+  (function(){
+    var ni=$('#newstory-input'), lb=$('#lockin-btn');
+    if(ni){
+      ni.addEventListener('input', function(){ lb.disabled = !ni.value.trim(); });
+      ni.addEventListener('keydown', function(e){ if(e.key==='Enter' && (e.metaKey||e.ctrlKey)){ e.preventDefault(); if(!lb.disabled) lockInNewStory(); } });
+    }
+    if(lb) lb.addEventListener('click', function(){ if(!lb.disabled) lockInNewStory(); });
+  })();
   $('#ba-keep').addEventListener('click', function(){ overlay.classList.remove('show'); go('home'); });
   $('#ba-wall').addEventListener('click', function(){ overlay.classList.remove('show'); go('wall'); });
 
@@ -923,7 +1045,8 @@
       last7: (s.last7 && s.last7.length===7) ? s.last7 : [0,0,0,0,0,0,0],
       habits: (s.habits && s.habits.length) ? s.habits : SEED_HABITS.slice(),
       stories: s.stories || [],
-      storiesBroken: (s.stories||[]).length
+      storiesBroken: (s.stories||[]).length,
+      affirmations: s.affirmations || []
     };
   }
 
@@ -932,7 +1055,8 @@
   function stateForSave(){
     var s=APP.state;
     return { dayStreak:s.dayStreak, longestStreak:s.longestStreak, totalCheckins:s.totalCheckins,
-             milestoneEvery:s.milestoneEvery, lastBreakDate:s.lastBreakDate, last7:s.last7, habits:s.habits };
+             milestoneEvery:s.milestoneEvery, lastBreakDate:s.lastBreakDate, last7:s.last7, habits:s.habits,
+             affirmations:s.affirmations||[] };
   }
   function persist(){
     saveLocal(APP.state);
@@ -943,9 +1067,9 @@
       .catch(function(){})
       .then(function(){ saving=false; if(again){ again=false; persist(); } });
   }
-  function saveBreakRow(text){
+  function saveBreakRow(text, newText){
     fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ type:'break', data:{ text:text||'', date:today() } })}).catch(function(){});
+      body:JSON.stringify({ type:'break', data:{ text:text||'', newText:newText||'', date:today() } })}).catch(function(){});
   }
 
   /* ----- once-per-day streak roll on a break ----- */
@@ -961,19 +1085,18 @@
     return true;
   }
 
-  function onBreak(hasText, text){
-    var counted = rollDayStreak();
-    if(hasText) saveBreakRow(text);                  // every written story → its own Wall/Notion row
-    else if(counted) saveBreakRow('');               // bare taps only log a row the first time each day
+  function onComplete(d){
+    rollDayStreak();
+    saveBreakRow(d.text, d.newText);                 // Break row stores old + new story
     APP.setState({ dayStreak:APP.state.dayStreak, longestStreak:APP.state.longestStreak,
       totalCheckins:APP.state.totalCheckins, lastBreakDate:APP.state.lastBreakDate, last7:APP.state.last7 });
-    persist();
+    persist();                                        // also persists affirmations (in the state blob)
   }
 
-  document.addEventListener('story:break', function(e){ onBreak(true, (e.detail||{}).text||''); });
-  document.addEventListener('day:break',   function(){ onBreak(false); });
-  document.addEventListener('habit:checkin', persist);
-  document.addEventListener('habit:add',     persist);
+  document.addEventListener('story:complete', function(e){ onComplete(e.detail||{}); });
+  document.addEventListener('aff:change',     persist);
+  document.addEventListener('habit:checkin',  persist);
+  document.addEventListener('habit:add',      persist);
 
   /* ----- boot: server → localStorage → seed ----- */
   var local = loadLocal();
